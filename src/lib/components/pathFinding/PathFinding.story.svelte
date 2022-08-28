@@ -1,10 +1,10 @@
 <script lang="ts">
-    import {Addon} from '$lib/components/book'
+    import {Addon, Table, SliderRow} from '$lib/components/book'
     import House, {floorPlan} from '$lib/components/house'
     import {Sprite} from '$lib/components'
     import {Canvas} from '$lib/elements'
     import {circle} from '$lib/components/sprite/renderFunctions'
-    export const __route = 'components/Path Finder'
+    export const __route = 'components/Path Finding'
 
     let plan = floorPlan`
     ..........................................
@@ -52,12 +52,8 @@
 </House>
 
 <Addon>
-    <h2> Editor </h2>
-    <table>
-        <thead><tr><th>Name</th><th>Value</th></tr></thead>
-        <tbody>
-            <tr> <td> x </td> <td> <input bind:value={x} type="range" min="0" step=".1" max={xMax} /> <span class="absolute right-10">{x}</span></td> </tr>
-            <tr> <td> y </td> <td> <input bind:value={y} type="range" min="0" step=".1" max={yMax} /> <span class="absolute right-10">{y}</span></td> </tr>
-        </tbody>
-    </table>
+    <Table title="Editor" headings={['Name', 'Value']}>
+        <SliderRow bind:value={x} label="x" max={xMax} />
+        <SliderRow bind:value={y} label="y" max={yMax} />
+    </Table>
 </Addon>

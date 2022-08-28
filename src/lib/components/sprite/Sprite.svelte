@@ -18,18 +18,20 @@
 </script>
 
 <script lang="ts">
-    import {onDestroy, onMount, getContext, tick} from 'svelte'
-    import {symbol} from '$lib/elements/canvas'
     export let x: number
     export let y: number
     export let renderFunction: RenderFunction
 
-    let details = {context: null, x, y, renderFunction}
+    import {onDestroy, onMount, getContext, tick} from 'svelte'
+    import {symbol} from '$lib/elements/canvas'
+    import type {GetCanvasContext} from '$lib/elements/canvas'
+
+    let details: SpriteDetails = {context: null, x, y, renderFunction}
     let setup = false
     $: details.x = x
     $: details.y = y
     $: details.renderFunction = renderFunction
-    const getCanvasContext: () => CanvasRenderingContext2D = getContext(symbol)
+    const getCanvasContext: GetCanvasContext = getContext(symbol)
 
 
     $: if (details.context && setup === false) {

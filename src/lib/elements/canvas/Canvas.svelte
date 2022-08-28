@@ -1,5 +1,6 @@
 <script context="module" lang="ts">
     export const symbol = Symbol()
+    export type GetCanvasContext = () => CanvasRenderingContext2D
 </script>
 
 <script lang="ts">

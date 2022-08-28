@@ -1,6 +1,6 @@
 <script lang="ts">
     import {Canvas} from '$lib/elements'
-    import {Addon, CodeBlock} from '$lib/components/book'
+    import {Addon, CodeBlock, Table, SliderRow, DropdownRow, ColorRow, DescriptionRow} from '$lib/components/book'
     import {circle, square} from './renderFunctions'
     import Sprite from './Sprite.svelte'
     export const __route = 'components/Sprite'
@@ -45,41 +45,21 @@
 </div>
 
 <Addon>
-    <h2> Editor </h2>
-    <table>
-        <thead><tr>
-            <th> Name </th>
-            <th> Value </th>
-        </tr></thead>
-        <tbody>
-            <tr> <td> x </td> <td> <input bind:value={x} type="range" min="0" step=".1" max={xMax} /> <span class="absolute right-10">{x}</span></td> </tr>
-            <tr> <td> y </td> <td> <input bind:value={y} type="range" min="0" step=".1" max={yMax} /> <span class="absolute right-10">{y}</span></td> </tr>
-            <tr> <td> render function </td> <td>
-                <select bind:value={renderFunction}>
-                    {#each Object.keys(renderFunctions) as renderFunctionName}
-                        <option value={renderFunctionName}>{renderFunctionName}</option>
-                    {/each}
-                </select>
-            </td> </tr>
-            <tr> <td>size</td> <td><input bind:value={size} step=".1" type="range" min="1" max="15" /> <span class="absolute right-10">{size}</span></td> </tr>
-            <tr> <td>color</td> <td> <input bind:value={color} type="color" /> </td> </tr>
-        </tbody>
-    </table>
-    <h2> Props </h2>
-    <table>
-        <thead><tr>
-            <th> Prop </th>
-            <th> Value </th>
-        </tr></thead>
-        <tbody>
-            <tr> <td> x </td> <td> The x position </td> </tr>
-            <tr> <td> y </td> <td> The y position </td> </tr>
-            <tr> <td> render function </td> <td>
-                A function that follows the signature
-                <code> (context: CanvasRenderingContext2D, x: number, y: number, unit: number) => void </code>
-            </td> </tr>
-        </tbody>
-    </table>
+    <Table title="Editor" headings={['Name', 'Value']}>
+        <SliderRow label="x" bind:value={x} step={.1} max={xMax} />
+        <SliderRow label="y" bind:value={y} step={.1} max={yMax} />
+        <SliderRow label="size" bind:value={size} step={.1} min={1} max={15} />
+        <DropdownRow label="render function" bind:value={renderFunction} options={Object.keys(renderFunctions)} />
+        <ColorRow label="color" bind:value={color} />
+    </Table>
+    <Table title="Props" headings={['Prop', 'Description']}>
+        <DescriptionRow name="x"> The x position </DescriptionRow>
+        <DescriptionRow name="y"> The y position </DescriptionRow>
+        <DescriptionRow name="render function">
+            A function that follows the signature
+            <code> (context: CanvasRenderingContext2D, x: number, y: number, unit: number) => void </code>
+        </DescriptionRow>
+    </Table>
     <h2>Usage</h2>
     <CodeBlock {source} />
     <h2> Creating a render function </h2>

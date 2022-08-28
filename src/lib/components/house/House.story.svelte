@@ -1,6 +1,6 @@
 <script lang="ts">
     import House, {floorPlan} from './House.svelte'
-    import {Addon, CodeBlock} from '$lib/components/book'
+    import {Addon, CodeBlock, Table, TextAreaRow} from '$lib/components/book'
     export const __route = 'components/House'
 
     let plan =
@@ -29,19 +29,9 @@
 </div>
 
 <Addon>
-    <h2>Props</h2>
-    <table>
-        <thead> <tr>
-            <th>Prop</th>
-            <th class="w-full">Value</th>
-        </tr></thead>
-        <tbody>
-            <tr>
-                <td>floorPlan</td>
-                <td class="w-full"><textarea bind:value={plan} class="w-full h-32 font-mono" /></td>
-            </tr>
-        </tbody>
-    </table>
+    <Table title="Props" headings={['Prop', 'Value']}>
+        <TextAreaRow label="floorPlan" bind:value={plan} mono />
+    </Table>
     <h2>Usage</h2>
     <CodeBlock bind:source={source} />
 </Addon>

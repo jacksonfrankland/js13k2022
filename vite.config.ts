@@ -4,7 +4,11 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [svelte()],
+	plugins: [svelte({
+		experimental: {
+			inspector: true
+		}
+	})],
 	resolve: {
 		alias: {
 			'$lib': path.resolve(__dirname, './src/lib'),

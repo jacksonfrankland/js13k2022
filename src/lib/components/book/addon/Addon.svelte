@@ -1,9 +1,17 @@
+<script lang="ts" context="module">
+    import { writable } from 'svelte/store'
+    export const debug = writable('')
+</script>
+
 <script lang="ts">
     import { Addon } from '@vitebook/client/addons'
     import { onMount } from 'svelte'
 
     let darkMode = localStorage.getItem('@vitebook/color-scheme') === 'dark'
-    onMount(() => document.querySelector('button.theme-switch').addEventListener('click', () => darkMode = !darkMode))
+    onMount(() => {
+        document.querySelector('button.theme-switch').addEventListener('click', () => darkMode = !darkMode)
+        $debug = ''
+    })
 </script>
 
 <Addon
@@ -14,5 +22,8 @@
     >
     <div class="prose prose-sm {darkMode ? 'prose-invert' : ''}">
         <slot />
+        {#if $debug.length}
+            <pre><code>{$debug}</code></pre>
+        {/if}
     </div>
 </Addon>

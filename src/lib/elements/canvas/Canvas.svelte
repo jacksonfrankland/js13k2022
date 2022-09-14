@@ -1,23 +1,45 @@
 <script context="module" lang="ts">
-    export const symbol = Symbol()
-    export type GetCanvasContext = () => CanvasRenderingContext2D
+    import type {Readable, Writable} from 'svelte/store'
+    export const contextSymbol = Symbol()
+    export const unitSymbol = Symbol()
+    export type CanvasContext = Readable<CanvasRenderingContext2D>
+    export type Unit = Writable<number>
+
 </script>
 
 <script lang="ts">
-    import {onDestroy, onMount, setContext} from 'svelte'
     export let context: CanvasRenderingContext2D = null
-    export let unit = 0
     export let width = 0
     export let height = 0
+    export let viewBoxWidth:number = null
+    export let viewBoxHeight: number = null
     export let zIndex: number | 'auto' = 'auto'
+
+    import {onDestroy, onMount, setContext} from 'svelte'
+    import {readable, writable} from 'svelte/store'
 
     let canvas: HTMLCanvasElement
     let resizeObserver: ResizeObserver
-    setContext(symbol, () => context)
+
+    setContext(contextSymbol, readable (context, set => {
+        onMount(() => set(canvas.getContext('2d')))
+    }))
+
+    const unit = writable(1)
+    setContext(unitSymbol, unit)
+
+    $: if (viewBoxWidth) {
+        $unit = width / viewBoxWidth
+    } else if (viewBoxHeight) {
+        $unit = height / viewBoxHeight
+    } else {
+        $unit = Math.max(width, height) / 100
+    }
 
     onMount(async () => {
         resizeObserver = new ResizeObserver(() => transform(canvas.parentElement.getBoundingClientRect()))
-        context = canvas.getContext('2d')!
+        window.addEventListener('resize', () =>transform(canvas.parentElement.getBoundingClientRect()))
+        context = canvas.getContext('2d')
         transform (canvas.parentElement.getBoundingClientRect())
         resizeObserver.observe(canvas.parentElement)
     })
@@ -36,7 +58,6 @@
         canvas.height = box.height * devicePixelRatio
         width = canvas.width / devicePixelRatio
         height = canvas.height / devicePixelRatio
-        unit = Math.max(width, height) / 100
         context.scale(devicePixelRatio, devicePixelRatio)
     }
 
@@ -48,4 +69,4 @@
 </script>
 
 <canvas class="fixed" bind:this={canvas} style:left style:top style:z-index={zIndex} style:width={widthStyle} style:height={heightStyle}></canvas>
-<slot {unit} {context} {width} {height} />
+<slot unit={$unit} {context} {width} {height} />

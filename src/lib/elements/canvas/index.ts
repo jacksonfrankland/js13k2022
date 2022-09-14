@@ -1,3 +1,3 @@
 export {default} from './Canvas.svelte'
-export {symbol} from './Canvas.svelte'
-export type {GetCanvasContext} from './Canvas.svelte'
+export {contextSymbol, unitSymbol} from './Canvas.svelte'
+export type {CanvasContext, Unit} from './Canvas.svelte'

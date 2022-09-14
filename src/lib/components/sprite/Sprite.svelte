@@ -1,6 +1,7 @@
 <script lang="ts" context="module">
     import type {RenderFunction} from './renderFunctions'
-    type SpriteDetails = {context: CanvasRenderingContext2D, x: number, y: number, renderFunction: RenderFunction}
+    import {get} from 'svelte/store'
+    type SpriteDetails = {context: CanvasRenderingContext2D, x: number, y: number, renderFunction: RenderFunction, unit: Unit}
     let sprites: Set<SpriteDetails> = new Set([])
 
     let frameRequest: number
@@ -11,7 +12,7 @@
             details.context,
             details.x,
             details.y,
-            Math.max(details.context.canvas.width, details.context.canvas.height) / 100 / devicePixelRatio
+           get(details.unit)
         ))
         requestAnimationFrame(renderSprites)
     }
@@ -22,31 +23,23 @@
     export let y: number
     export let renderFunction: RenderFunction
 
-    import {onDestroy, onMount, getContext, tick} from 'svelte'
-    import {symbol} from '$lib/elements/canvas'
-    import type {GetCanvasContext} from '$lib/elements/canvas'
+    import {onDestroy, onMount, getContext} from 'svelte'
+    import type {CanvasContext, Unit} from '$lib/elements/canvas'
+    import {contextSymbol, unitSymbol} from '$lib/elements/canvas'
 
-    let details: SpriteDetails = {context: null, x, y, renderFunction}
-    let setup = false
+    const contextStore: CanvasContext = getContext(contextSymbol)
+    const unit: Unit = getContext(unitSymbol)
+    let details: SpriteDetails = {context: $contextStore, x, y, renderFunction, unit}
     $: details.x = x
     $: details.y = y
     $: details.renderFunction = renderFunction
-    const getCanvasContext: GetCanvasContext = getContext(symbol)
 
-
-    $: if (details.context && setup === false) {
+    $: if ($contextStore) {
+        details.context = $contextStore
         sprites.add(details)
-        setup = true
     }
 
-    onMount(async () => {
-        if (frameRequest === undefined) {
-            frameRequest = requestAnimationFrame(renderSprites)
-        }
-        await tick()
-        details.context = getCanvasContext()
-    })
-    onDestroy(() => {
-        sprites.delete(details)
-    })
+    onMount(() => frameRequest = frameRequest ?? requestAnimationFrame(renderSprites))
+    onDestroy(() => sprites.delete(details))
+
 </script>
